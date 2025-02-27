@@ -1,0 +1,44 @@
+import input.rules
+
+# Default to pass if no violations found
+default result = {"result": "pass"}
+
+# Check if we should skip the evaluation
+skip[rule] {
+    rule := rules[_]
+    rule.description == "my-service"
+}
+
+# Evaluate if port 80 is used in TCP ingress rules
+deny[rule] {
+    rule := rules[_]
+    not skip[rule]
+    rule.protocol == "tcp"
+    rule.direction == "Ingress"
+    port := rule.port[_]
+    contains_port_80(port)
+}
+
+# Helper function to check if port 80 is in a range or exact match
+contains_port_80(port) {
+    port == "80"
+}
+
+contains_port_80(port) {
+    parts := split(port, "-")
+    count(parts) == 2
+    start := to_number(parts[0])
+    end := to_number(parts[1])
+    start <= 80
+    end >= 80
+}
+
+# Set result based on evaluation
+result = {"result": "skip"} {
+    count(skip) > 0
+    count(deny) == 0
+}
+
+result = {"result": "fail"} {
+    count(deny) > 0
+}
