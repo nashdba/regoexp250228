@@ -1,0 +1,22 @@
+{
+    "rules": [
+        {
+            "protocol": "tcp",
+            "description": "my-service",
+            "port": ["80", "9092-9095"],
+            "direction": "Ingress"
+        },
+        {
+            "protocol": "tcp",
+            "description": "another-service",
+            "port": ["80"],
+            "direction": "Ingress"
+        },
+        {
+            "protocol": "tcp",
+            "description": "secure-service",
+            "port": ["443"],
+            "direction": "Ingress"
+        }
+    ]
+}
